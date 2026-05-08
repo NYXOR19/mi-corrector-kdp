@@ -3,9 +3,9 @@ from pypdf import PdfReader, PdfWriter
 import io
 
 # ==========================================
-# 🔑 TU PANEL DE CONTROL (CAMBIA EL CÓDIGO AQUÍ)
+# 🔑 TU PANEL DE CONTROL
 # ==========================================
-CODIGO_SECRETO = "KDPPRO78546" 
+CODIGO_SECRETO = "KDPFDP85661" 
 # ==========================================
 
 # 1. CONFIGURACIÓN DE PÁGINA
@@ -39,8 +39,9 @@ st.markdown("""
         transition: 0.3s; color: #FFFFFF !important;
         margin-bottom: 12px; border: 2px solid #000000;
     }
+    .btn-pago:hover { opacity: 0.8; transform: scale(1.02); }
 
-    /* BOTÓN DE DESCARGA (SOLO SE ACTIVA CON EL CÓDIGO) */
+    /* BOTÓN DE DESCARGA */
     div.stButton > button {
         background-color: #28a745 !important;
         color: white !important;
@@ -75,18 +76,21 @@ if archivo_subido:
 
     with col_izq:
         st.markdown("### 💳 1. Obtén tu Código de Activación")
-        st.write("Realiza el pago de **2,99€** para recibir tu código de desbloqueo.")
+        st.write("Para procesar y descargar tu archivo corregido, realiza el pago de **2,99€**.")
         
-        # Botones de Pago
-        st.markdown(f'<a href="https://www.paypal.me/DanielTalavera443/2.99EUR" target="_blank" class="btn-pago" style="background-color:#0070ba;">💳 Pagar con Tarjeta</a>', unsafe_allow_html=True)
-        st.markdown(f'<a href="https://www.paypal.me/DanielTalavera443/2.99EUR" target="_blank" class="btn-pago" style="background-color:#FFB113; color:black !important;">🅿️ Pagar con PayPal</a>', unsafe_allow_html=True)
+        # Botones de Pago actualizados con tu usuario verificado
+        enlace_pago = "https://www.paypal.me/DanielTalavera443/2.99"
         
+        st.markdown(f'<a href="{enlace_pago}" target="_blank" class="btn-pago" style="background-color:#0070ba;">💳 Pagar con Tarjeta</a>', unsafe_allow_html=True)
+        st.markdown(f'<a href="{enlace_pago}" target="_blank" class="btn-pago" style="background-color:#FFB113; color:black !important;">🅿️ Pagar con PayPal</a>', unsafe_allow_html=True)
+        
+        st.info("📩 **Instrucciones:** Tras el pago, recibirás el código en tu email de PayPal. Si tardas en recibirlo, contacta con soporte.")
         st.markdown("---")
         
         st.markdown("### 🔑 2. Introduce el Código")
-        codigo_input = st.text_input("Escribe el código recibido tras el pago:", placeholder="Escribe aquí el código...")
+        codigo_input = st.text_input("Escribe el código recibido tras el pago:", placeholder="Ejemplo: KDP_PRO_88", type="password")
 
-        # LÓGICA DE BLOQUEO
+        # LÓGICA DE BLOQUEO Y PROCESAMIENTO
         if codigo_input == CODIGO_SECRETO:
             st.success("✅ Código validado con éxito.")
             if st.button("🚀 PROCESAR Y DESCARGAR AHORA"):
@@ -102,8 +106,8 @@ if archivo_subido:
                     
                     st.balloons()
                     st.download_button(label="📥 CLIC AQUÍ PARA DESCARGAR PDF", data=output, file_name="manuscrito_listo.pdf", mime="application/pdf")
-                except:
-                    st.error("Error técnico al procesar el archivo.")
+                except Exception as e:
+                    st.error(f"Error técnico al procesar el archivo: {e}")
         elif codigo_input != "":
             st.error("❌ Código incorrecto o caducado.")
 
@@ -123,3 +127,8 @@ c1, c2, c3 = st.columns(3)
 with c1: st.markdown("<div style='text-align:center;'>🛡️<br><b>Pago Seguro</b></div>", unsafe_allow_html=True)
 with c2: st.markdown("<div style='text-align:center;'>⚡<br><b>Entrega Inmediata</b></div>", unsafe_allow_html=True)
 with c3: st.markdown("<div style='text-align:center;'>🧹<br><b>Sin Registros</b></div>", unsafe_allow_html=True)
+
+# 5. SOPORTE EN SIDEBAR
+st.sidebar.markdown("### 🆘 Soporte")
+st.sidebar.write("¿Problemas con tu código?")
+st.sidebar.write("📧 danieltalavera67@gmail.com")
