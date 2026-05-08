@@ -2,13 +2,16 @@ import streamlit as st
 from pypdf import PdfReader, PdfWriter
 import io
 
+# ==========================================
+# 🔑 TU PANEL DE CONTROL (CAMBIA EL CÓDIGO AQUÍ)
+# ==========================================
+CODIGO_SECRETO = "KDPPRO78546" 
+# ==========================================
+
 # 1. CONFIGURACIÓN DE PÁGINA
 st.set_page_config(page_title="KDP Formatter Pro", page_icon="📏", layout="wide")
 
-# --- TU CÓDIGO DE SEGURIDAD (Cámbialo cuando quieras) ---
-CODIGO_SECRETO = "KDPPRO2026"
-
-# 2. CSS PARA ELIMINAR FRANJAS OSCURAS Y DISEÑO DE ALTA CONVERSIÓN
+# 2. ESTILO LIMPIO (TODO BLANCO, LETRAS NEGRAS)
 st.markdown("""
     <style>
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
@@ -20,18 +23,13 @@ st.markdown("""
     .hero-title { font-size: 50px !important; font-weight: 900 !important; text-align: center; color: #000000 !important; margin-top: -50px; }
     .hero-subtitle { font-size: 18px; text-align: center; color: #666666 !important; margin-bottom: 30px; }
 
-    /* ESTILO SUBIDOR DE ARCHIVOS */
+    /* SUBIDOR DE ARCHIVOS */
     [data-testid="stFileUploader"] {
         background-color: #FFFFFF !important;
         border: 2px solid #000000 !important;
         border-radius: 15px !important;
         padding: 20px !important;
-        max-width: 850px;
-        margin: 0 auto !important;
     }
-    [data-testid="stFileUploaderDropzone"] { background-color: #FFFFFF !important; border: 1px dashed #cccccc !important; }
-    [data-testid="stFileUploaderDropzone"] button { background-color: #FFFFFF !important; color: #000000 !important; border: 1px solid #000000 !important; }
-    [data-testid="stFileUploaderDropzone"] * { color: #000000 !important; fill: #000000 !important; }
 
     /* BOTONES DE PAGO */
     .btn-pago {
@@ -42,7 +40,7 @@ st.markdown("""
         margin-bottom: 12px; border: 2px solid #000000;
     }
 
-    /* BOTÓN DE DESCARGA (SOLO VISIBLE CON CÓDIGO) */
+    /* BOTÓN DE DESCARGA (SOLO SE ACTIVA CON EL CÓDIGO) */
     div.stButton > button {
         background-color: #28a745 !important;
         color: white !important;
@@ -52,10 +50,8 @@ st.markdown("""
         width: 100% !important;
         height: 3.5em !important;
         border: none !important;
-        box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
     }
     
-    /* CAJA DE VISTA PREVIA */
     .preview-card {
         border: 2px solid #000000;
         padding: 20px;
@@ -67,9 +63,9 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 3. INTERFAZ PRINCIPAL
+# 3. INTERFAZ
 st.markdown('<h1 class="hero-title">Corrector KDP Pro</h1>', unsafe_allow_html=True)
-st.markdown('<p class="hero-subtitle">Márgenes y sangría profesionales en segundos</p>', unsafe_allow_html=True)
+st.markdown('<p class="hero-subtitle">Formato profesional para autores independientes</p>', unsafe_allow_html=True)
 
 archivo_subido = st.file_uploader("", type="pdf")
 
@@ -79,7 +75,7 @@ if archivo_subido:
 
     with col_izq:
         st.markdown("### 💳 1. Obtén tu Código de Activación")
-        st.write("Para procesar y descargar tu manuscrito corregido, realiza el pago único de **2,99€**:")
+        st.write("Realiza el pago de **2,99€** para recibir tu código de desbloqueo.")
         
         # Botones de Pago
         st.markdown(f'<a href="https://www.paypal.me/DanielTalavera443/2.99EUR" target="_blank" class="btn-pago" style="background-color:#0070ba;">💳 Pagar con Tarjeta</a>', unsafe_allow_html=True)
@@ -87,13 +83,13 @@ if archivo_subido:
         
         st.markdown("---")
         
-        # CAMPO DE TEXTO PARA EL CÓDIGO
-        st.markdown("### 🔑 2. Desbloquea tu descarga")
-        codigo_input = st.text_input("Introduce el código recibido tras el pago:", placeholder="Ejemplo: KDP123", help="El código se envía a tu email tras confirmar el pago.")
+        st.markdown("### 🔑 2. Introduce el Código")
+        codigo_input = st.text_input("Escribe el código recibido tras el pago:", placeholder="Escribe aquí el código...")
 
+        # LÓGICA DE BLOQUEO
         if codigo_input == CODIGO_SECRETO:
-            st.success("✅ ¡Código validado! Procesador listo.")
-            if st.button("🚀 GENERAR Y DESCARGAR PDF PERFECTO"):
+            st.success("✅ Código validado con éxito.")
+            if st.button("🚀 PROCESAR Y DESCARGAR AHORA"):
                 try:
                     reader = PdfReader(archivo_subido)
                     writer = PdfWriter()
@@ -105,30 +101,25 @@ if archivo_subido:
                     output.seek(0)
                     
                     st.balloons()
-                    st.download_button(label="📥 CLIC AQUÍ PARA DESCARGAR", data=output, file_name="manuscrito_maquetado.pdf", mime="application/pdf")
+                    st.download_button(label="📥 CLIC AQUÍ PARA DESCARGAR PDF", data=output, file_name="manuscrito_listo.pdf", mime="application/pdf")
                 except:
-                    st.error("Error al procesar el PDF.")
+                    st.error("Error técnico al procesar el archivo.")
         elif codigo_input != "":
-            st.error("❌ Código inválido. Asegúrate de haber completado el pago correctamente.")
+            st.error("❌ Código incorrecto o caducado.")
 
     with col_der:
-        st.markdown("### 👀 Resultado Profesional")
+        st.markdown("### 👀 Vista Previa del Formato")
         st.markdown("""
             <div class="preview-card">
-                <p style="color:#28a745; font-weight:bold; font-size:1.2rem;">✓ FORMATO KDP DETECTADO</p>
-                <img src="https://m.media-amazon.com/images/G/01/img18/home/2018/kdp/interior-format-01._CB485935041_.png" width="100%" style="border-radius:10px; border:1px solid #eee;">
-                <div style="text-align:left; font-size:14px; margin-top:15px; color:#444;">
-                    • Ajuste de márgenes de lomo automático<br>
-                    • Preparación de sangría (Bleed) para imágenes<br>
-                    • Verificación de resolución 300 DPI<br>
-                    • Formato listo para subir a Amazon
-                </div>
+                <p style="color:#28a745; font-weight:bold; font-size:1.2rem;">RESULTADO PROFESIONAL</p>
+                <img src="https://m.media-amazon.com/images/G/01/img18/home/2018/kdp/interior-format-01._CB485935041_.png" width="100%" style="border-radius:10px;">
+                <p style="font-size:14px; color:#555; margin-top:10px;">Su archivo será optimizado con márgenes de impresión simétricos y sangría reglamentaria.</p>
             </div>
         """, unsafe_allow_html=True)
 
-# 4. TARJETAS DE CONFIANZA
-st.markdown("<br><br><br>", unsafe_allow_html=True)
+# 4. CONFIANZA
+st.markdown("<br><br>", unsafe_allow_html=True)
 c1, c2, c3 = st.columns(3)
-with c1: st.markdown("<div style='text-align:center;'>🛡️<br><b>Pago Encriptado</b></div>", unsafe_allow_html=True)
+with c1: st.markdown("<div style='text-align:center;'>🛡️<br><b>Pago Seguro</b></div>", unsafe_allow_html=True)
 with c2: st.markdown("<div style='text-align:center;'>⚡<br><b>Entrega Inmediata</b></div>", unsafe_allow_html=True)
-with c3: st.markdown("<div style='text-align:center;'>🧼<br><b>Privacidad Total</b></div>", unsafe_allow_html=True)
+with c3: st.markdown("<div style='text-align:center;'>🧹<br><b>Sin Registros</b></div>", unsafe_allow_html=True)
