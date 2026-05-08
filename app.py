@@ -1,6 +1,7 @@
 import streamlit as st
 from pypdf import PdfReader, PdfWriter
 import io
+st.markdown('<meta name="google-site-verification" content="x7hiwIVud_Hq-E_cWq0-DxtQeGK5a3lOTSxZzu3Q-bc" /> , unsafe_allow_html=True)
 
 # ==========================================
 # 🔑 TU PANEL DE CONTROL
