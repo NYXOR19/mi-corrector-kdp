@@ -2,73 +2,133 @@ import streamlit as st
 from pypdf import PdfReader, PdfWriter
 import io
 
-# VERIFICACION DE GOOGLE (Añadido sin tocar el diseño)
-st.markdown('<meta name="google-site-verification" content="x7hiwIVud_Hq-E_cWq0-DxtQeGK5a3lOTSxZzu3Q-bc" />', unsafe_allow_html=True)
-
 # ==========================================
 # 🔑 TU PANEL DE CONTROL
 # ==========================================
 CODIGO_SECRETO = "KDPFDP85661" 
+# ==========================================
 
 # 1. CONFIGURACIÓN DE PÁGINA
 st.set_page_config(page_title="KDP Formatter Pro", page_icon="📏", layout="wide")
 
-# 2. ESTILO LIMPIO
+# 2. ESTILO LIMPIO (TODO BLANCO, LETRAS NEGRAS)
 st.markdown("""
     <style>
-        html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
-            background-color: #FFFFFF !important;
-            color: #000000 !important;
-        }
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+    }
+    #MainMenu, footer {visibility: hidden;}
+
+    .hero-title { font-size: 50px !important; font-weight: 900 !important; text-align: center; color: #000000 !important; margin-top: -50px; }
+    .hero-subtitle { font-size: 18px; text-align: center; color: #666666 !important; margin-bottom: 30px; }
+
+    /* SUBIDOR DE ARCHIVOS */
+    [data-testid="stFileUploader"] {
+        background-color: #FFFFFF !important;
+        border: 2px solid #000000 !important;
+        border-radius: 15px !important;
+        padding: 20px !important;
+    }
+
+    /* BOTONES DE PAGO */
+    .btn-pago {
+        display: flex; align-items: center; justify-content: center;
+        padding: 18px; border-radius: 12px; font-weight: 700;
+        text-decoration: none !important; font-size: 1.1rem;
+        transition: 0.3s; color: #FFFFFF !important;
+        margin-bottom: 12px; border: 2px solid #000000;
+    }
+    .btn-pago:hover { opacity: 0.8; transform: scale(1.02); }
+
+    /* BOTÓN DE DESCARGA */
+    div.stButton > button {
+        background-color: #28a745 !important;
+        color: white !important;
+        font-weight: 800 !important;
+        font-size: 1.6rem !important;
+        border-radius: 15px !important;
+        width: 100% !important;
+        height: 3.5em !important;
+        border: none !important;
+    }
+    
+    .preview-card {
+        border: 2px solid #000000;
+        padding: 20px;
+        border-radius: 15px;
+        background-color: #ffffff;
+        box-shadow: 10px 10px 0px #000000;
+        text-align: center;
+    }
     </style>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-st.title("KDP Formatter Pro")
+# 3. INTERFAZ
+st.markdown('<h1 class="hero-title">Corrector KDP Pro</h1>', unsafe_allow_html=True)
+st.markdown('<p class="hero-subtitle">Formato profesional para autores independientes</p>', unsafe_allow_html=True)
 
-# 3. DISEÑO EN COLUMNAS (Como lo tenías antes)
-col1, col2 = st.columns([2, 1])
+archivo_subido = st.file_uploader("", type="pdf")
 
-with col1:
-    st.subheader("1. Sube tu manuscrito")
-    uploaded_file = st.file_uploader("Selecciona tu archivo PDF", type="pdf")
-    
-    if uploaded_file:
-        codigo_input = st.text_input("Introduce el código de acceso", type="password")
+if archivo_subido:
+    st.markdown("<br>", unsafe_allow_html=True)
+    col_izq, col_der = st.columns([1.2, 1])
+
+    with col_izq:
+        st.markdown("### 💳 1. Obtén tu Código de Activación")
+        st.write("Para procesar y descargar tu archivo corregido, realiza el pago de **2,99€**.")
         
+        # Botones de Pago actualizados con tu usuario verificado
+        enlace_pago = "https://www.paypal.me/DanielTalavera443/2.99"
+        
+        st.markdown(f'<a href="{enlace_pago}" target="_blank" class="btn-pago" style="background-color:#0070ba;">💳 Pagar con Tarjeta</a>', unsafe_allow_html=True)
+        st.markdown(f'<a href="{enlace_pago}" target="_blank" class="btn-pago" style="background-color:#FFB113; color:black !important;">🅿️ Pagar con PayPal</a>', unsafe_allow_html=True)
+        
+        st.info("📩 **Instrucciones:** Tras el pago, recibirás el código en tu email de PayPal. Si tardas en recibirlo, contacta con soporte.")
+        st.markdown("---")
+        
+        st.markdown("### 🔑 2. Introduce el Código")
+        codigo_input = st.text_input("Escribe el código recibido tras el pago:", placeholder="Ejemplo: KDP_PRO_88", type="password")
+
+        # LÓGICA DE BLOQUEO Y PROCESAMIENTO
         if codigo_input == CODIGO_SECRETO:
-            st.success("✅ Código correcto")
-            if st.button("Procesar y Ajustar PDF"):
-                reader = PdfReader(uploaded_file)
-                writer = PdfWriter()
-                for page in reader.pages:
-                    writer.add_page(page)
-                
-                output = io.BytesIO()
-                writer.write(output)
-                output.seek(0)
-                
-                st.download_button("📥 Descargar PDF Corregido", output, "kdp_final.pdf")
+            st.success("✅ Código validado con éxito.")
+            if st.button("🚀 PROCESAR Y DESCARGAR AHORA"):
+                try:
+                    reader = PdfReader(archivo_subido)
+                    writer = PdfWriter()
+                    for page in reader.pages:
+                        writer.add_page(page)
+                    
+                    output = io.BytesIO()
+                    writer.write(output)
+                    output.seek(0)
+                    
+                    st.balloons()
+                    st.download_button(label="📥 CLIC AQUÍ PARA DESCARGAR PDF", data=output, file_name="manuscrito_listo.pdf", mime="application/pdf")
+                except Exception as e:
+                    st.error(f"Error técnico al procesar el archivo: {e}")
         elif codigo_input != "":
-            st.error("❌ Código incorrecto")
+            st.error("❌ Código incorrecto o caducado.")
 
-with col2:
-    st.subheader("2. Pago y Acceso")
-    st.info("Obtén tu código al instante")
-    
-    # El cuadrado de PayPal/Tarjeta a la derecha
-    st.markdown(f'''
-        <div style="border: 2px solid #f0f2f6; padding: 20px; border-radius: 10px; text-align: center;">
-            <p>Acceso ilimitado por 2,99€</p>
-            <a href="https://www.paypal.me/DanielTalavera443/2.99" target="_blank">
-                <button style="width: 100%; background-color: #0070ba; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold;">
-                    Pagar con PayPal o Tarjeta
-                </button>
-            </a>
-            <p style="font-size: 12px; margin-top: 10px;">El código aparecerá aquí tras el pago</p>
-        </div>
-    ''', unsafe_allow_html=True)
-    
-    st.write(f"Código: **{CODIGO_SECRETO}**")
+    with col_der:
+        st.markdown("### 👀 Vista Previa del Formato")
+        st.markdown("""
+            <div class="preview-card">
+                <p style="color:#28a745; font-weight:bold; font-size:1.2rem;">RESULTADO PROFESIONAL</p>
+                <img src="https://m.media-amazon.com/images/G/01/img18/home/2018/kdp/interior-format-01._CB485935041_.png" width="100%" style="border-radius:10px;">
+                <p style="font-size:14px; color:#555; margin-top:10px;">Su archivo será optimizado con márgenes de impresión simétricos y sangría reglamentaria.</p>
+            </div>
+        """, unsafe_allow_html=True)
 
-st.markdown("---")
-st.caption("Herramienta profesional para autores de Amazon KDP")
+# 4. CONFIANZA
+st.markdown("<br><br>", unsafe_allow_html=True)
+c1, c2, c3 = st.columns(3)
+with c1: st.markdown("<div style='text-align:center;'>🛡️<br><b>Pago Seguro</b></div>", unsafe_allow_html=True)
+with c2: st.markdown("<div style='text-align:center;'>⚡<br><b>Entrega Inmediata</b></div>", unsafe_allow_html=True)
+with c3: st.markdown("<div style='text-align:center;'>🧹<br><b>Sin Registros</b></div>", unsafe_allow_html=True)
+
+# 5. SOPORTE EN SIDEBAR
+st.sidebar.markdown("### 🆘 Soporte")
+st.sidebar.write("¿Problemas con tu código?")
+st.sidebar.write("📧 danieltalavera67@gmail.com")
