@@ -14,11 +14,8 @@ archivo_subido = st.file_uploader("Sube tu manuscrito en PDF aquí", type="pdf")
 if archivo_subido is not None:
     st.success("✅ Archivo cargado correctamente")
     st.info("### 💳 Paso 1: Realiza el pago de $2.99 USD")
-    
-  enlace_paypal ="https://www.paypal.me/DanielTalavera443/2.99"
-    
-    
-    st.markdown(f'''
+    enlace_paypal ="https://www.paypal.me/DanielTalavera443/2.99"
+     st.markdown(f'''
         <a href="{enlace_paypal}" target="_blank">
             <button style="background-color: #0070ba; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
                 Pagar con PayPal ahora
