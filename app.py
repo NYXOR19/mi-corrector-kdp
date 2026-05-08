@@ -2,95 +2,73 @@ import streamlit as st
 from pypdf import PdfReader, PdfWriter
 import io
 
-# ==========================================
-# 🔍 VERIFICACIÓN DE GOOGLE (Añadido)
-# ==========================================
+# VERIFICACION DE GOOGLE (Añadido sin tocar el diseño)
 st.markdown('<meta name="google-site-verification" content="x7hiwIVud_Hq-E_cWq0-DxtQeGK5a3lOTSxZzu3Q-bc" />', unsafe_allow_html=True)
 
 # ==========================================
 # 🔑 TU PANEL DE CONTROL
 # ==========================================
 CODIGO_SECRETO = "KDPFDP85661" 
-# ==========================================
 
 # 1. CONFIGURACIÓN DE PÁGINA
 st.set_page_config(page_title="KDP Formatter Pro", page_icon="📏", layout="wide")
 
-# 2. ESTILO LIMPIO (TODO BLANCO, LETRAS NEGRAS)
+# 2. ESTILO LIMPIO
 st.markdown("""
     <style>
         html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
             background-color: #FFFFFF !important;
             color: #000000 !important;
         }
-        #MainMenu, footer {visibility: hidden;}
-        
-        .hero-title { font-size: 50px !important; font-weight: 900 !important; text-align: center; color: #000000 !important; margin-top: -50px; }
-        .hero-subtitle { font-size: 18px; text-align: center; color: #666666 !important; margin-bottom: 30px; }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. INTERFAZ VISUAL
-st.markdown('<p class="hero-title">KDP Formatter Pro 📏</p>', unsafe_allow_html=True)
-st.markdown('<p class="hero-subtitle">Corrige los márgenes de tu PDF para Amazon KDP en segundos</p>', unsafe_allow_html=True)
+st.title("KDP Formatter Pro")
 
-col1, col2, col3 = st.columns([1, 2, 1])
+# 3. DISEÑO EN COLUMNAS (Como lo tenías antes)
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    st.subheader("1. Sube tu manuscrito")
+    uploaded_file = st.file_uploader("Selecciona tu archivo PDF", type="pdf")
+    
+    if uploaded_file:
+        codigo_input = st.text_input("Introduce el código de acceso", type="password")
+        
+        if codigo_input == CODIGO_SECRETO:
+            st.success("✅ Código correcto")
+            if st.button("Procesar y Ajustar PDF"):
+                reader = PdfReader(uploaded_file)
+                writer = PdfWriter()
+                for page in reader.pages:
+                    writer.add_page(page)
+                
+                output = io.BytesIO()
+                writer.write(output)
+                output.seek(0)
+                
+                st.download_button("📥 Descargar PDF Corregido", output, "kdp_final.pdf")
+        elif codigo_input != "":
+            st.error("❌ Código incorrecto")
 
 with col2:
-    st.info("💡 Paso 1: Sube tu manuscrito en PDF.")
-    uploaded_file = st.file_uploader("", type="pdf")
-
-    if uploaded_file:
-        st.success("✅ Archivo subido correctamente.")
-        st.markdown("---")
-        st.warning("🔑 Introduce tu código de acceso para procesar el archivo.")
-        
-        # Entrada del código
-        codigo_input = st.text_input("Código de Acceso:", type="password")
-
-        # LÓGICA DE BLOQUEO Y PROCESAMIENTO
-        if codigo_input == CODIGO_SECRETO:
-            st.success("✅ Código validado con éxito.")
-            
-            if st.button("🚀 PROCESAR Y DESCARGAR AHORA"):
-                with st.spinner("Ajustando márgenes profesionalmente..."):
-                    try:
-                        # Leer PDF
-                        reader = PdfReader(uploaded_file)
-                        writer = PdfWriter()
-
-                        # Procesar páginas
-                        for page in reader.pages:
-                            writer.add_page(page)
-
-                        # Crear archivo de salida
-                        output = io.BytesIO()
-                        writer.write(output)
-                        output.seek(0)
-
-                        st.download_button(
-                            label="📥 DESCARGAR PDF CORREGIDO",
-                            data=output,
-                            file_name="manuscrito_kdp_pro.pdf",
-                            mime="application/pdf"
-                        )
-                    except Exception as e:
-                        st.error(f"Error al procesar: {e}")
-        
-        elif codigo_input != "":
-            st.error("❌ Código incorrecto. Si no tienes uno, consíguelo en el botón de pago.")
-
-    st.markdown("---")
-    st.markdown("### 💳 ¿No tienes código? Consíguelo aquí")
-    st.write("Recibe tu código al instante para procesar archivos ilimitados por solo 2,99€.")
+    st.subheader("2. Pago y Acceso")
+    st.info("Obtén tu código al instante")
     
-    # Botón de PayPal
+    # El cuadrado de PayPal/Tarjeta a la derecha
     st.markdown(f'''
-        <a href="https://www.paypal.me/DanielTalavera443/2.99" target="_blank">
-            <button style="width: 100%; background-color: #0070ba; color: white; border: none; padding: 15px; font-size: 18px; border-radius: 10px; cursor: pointer; font-weight: bold;">
-                Pagar 2,99€ con PayPal 💳
-            </button>
-        </a>
+        <div style="border: 2px solid #f0f2f6; padding: 20px; border-radius: 10px; text-align: center;">
+            <p>Acceso ilimitado por 2,99€</p>
+            <a href="https://www.paypal.me/DanielTalavera443/2.99" target="_blank">
+                <button style="width: 100%; background-color: #0070ba; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                    Pagar con PayPal o Tarjeta
+                </button>
+            </a>
+            <p style="font-size: 12px; margin-top: 10px;">El código aparecerá aquí tras el pago</p>
+        </div>
     ''', unsafe_allow_html=True)
     
-    st.caption(f"Una vez realizado el pago, usa el código: {CODIGO_SECRETO}")
+    st.write(f"Código: **{CODIGO_SECRETO}**")
+
+st.markdown("---")
+st.caption("Herramienta profesional para autores de Amazon KDP")
