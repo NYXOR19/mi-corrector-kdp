@@ -1,3 +1,5 @@
+st.markdown('<meta name="google-site-verification" content="google12b9611524f584d3" />', unsafe_allow_html=True)
+
 import streamlit as st
 from pypdf import PdfReader, PdfWriter
 import io
