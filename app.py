@@ -9,9 +9,6 @@ st.components.v1.html("""<meta name="google-site-verification" content="google12
 from pypdf import PdfReader, PdfWriter
 import io
 
-# ---------------------------------------------------------
-# A PARTIR DE AQUÍ SIGUE TU CÓDIGO DE ESTILOS (Línea 15 en adelante)
-# ---------------------------------------------------------
 # ==========================================
 # 🔑 TU PANEL DE CONTROL
 # ==========================================
