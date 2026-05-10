@@ -1,16 +1,22 @@
 import streamlit as st
-st.markdown('<meta name="google-site-verification" content="google12b9611524f584d3" />', unsafe_allow_html=True)
+
+# 1. CONFIGURACIÓN DE PÁGINA (ESTO DEBE IR PRIMERO Y SOLO UNA VEZ)
+st.set_page_config(page_title="KDP Formatter Pro", page_icon="✒️", layout="wide")
+
+# 2. CÓDIGO DE VERIFICACIÓN PARA GOOGLE
+st.components.v1.html("""<meta name="google-site-verification" content="google12b9611524f584d3" />""", height=0)
+
 from pypdf import PdfReader, PdfWriter
 import io
 
+# ---------------------------------------------------------
+# A PARTIR DE AQUÍ SIGUE TU CÓDIGO DE ESTILOS (Línea 15 en adelante)
+# ---------------------------------------------------------
 # ==========================================
 # 🔑 TU PANEL DE CONTROL
 # ==========================================
 CODIGO_SECRETO = "KDPFDP85661" 
 # ==========================================
-
-# 1. CONFIGURACIÓN DE PÁGINA
-st.set_page_config(page_title="KDP Formatter Pro", page_icon="📏", layout="wide")
 
 # 2. ESTILO LIMPIO (TODO BLANCO, LETRAS NEGRAS)
 st.markdown("""
